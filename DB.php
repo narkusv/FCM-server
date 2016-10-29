@@ -1,9 +1,12 @@
 <?php
-
+	
+	
 	class DB{
 		public static $conn;
 		
 		public function __construct(){
+			
+
 			date_default_timezone_set("Asia/Calcutta");
 			
 			ini_set('display_errors', 1);
@@ -11,7 +14,7 @@
 			error_reporting(E_ALL);
 		
 			
-			$this->getConection();
+	
 		
 		}
 		
@@ -30,7 +33,7 @@
 			return DB::$conn;
 		}
 			
-		
+			/* --Registration methods-- */
 		//TODO Write functions to register user in GCM database;
 		public function RegisterUserInGCM($data){
 			$email = $data['email'];
@@ -52,6 +55,7 @@
 						file_put_contents("log.txt", "User already has app, updating its regid\n" . $_REQUEST['email']);
 					
 						$this->UpdateRegID($isUserRegisteredInSystem, $regId);
+						
 					}else{
 						//Scenario is verified
 						file_put_contents("log.txt", "User doesnt have app, adding to user_apps\n" . $_REQUEST['email']);
@@ -91,7 +95,7 @@
 		}
 		
 		
-		public function isUserRegisteredInSystem($email){
+		private function isUserRegisteredInSystem($email){
 			$query = "SELECT ID FROM users WHERE email LIKE '$email' LIMIT 1"; //http://stackoverflow.com/questions/1676551/best-way-to-test-if-a-row-exists-in-a-mysql-table this should be fastest way to find a TEXT
 			$result = $this->getConection()->query($query);
 		
@@ -103,7 +107,7 @@
 		}
 		
 	
-		public function isAppInSystem($app){
+		private function isAppInSystem($app){
 			$query = "SELECT ID FROM apps WHERE appName LIKE '$app' LIMIT 1"; //http://stackoverflow.com/questions/1676551/best-way-to-test-if-a-row-exists-in-a-mysql-table this should be fastest way to find a TEXT
 			$result = $this->getConection()->query($query);
 			if (!$result) {
@@ -113,7 +117,7 @@
 			return ($result->fetch_assoc()["ID"]);
 		}
 		
-		public function isUserHasApp($appID, $userID){
+		private function isUserHasApp($appID, $userID){
 			$query = "SELECT * FROM user_apps WHERE appID = $appID AND userID = $userID";
 			$result = $this->getConection()->query($query);
 			if (!$result) {
@@ -122,7 +126,7 @@
 			return ($result->num_rows) > 0;
 		}
 
-		public function UpdateRegID($userId, $regId){
+		private function UpdateRegID($userId, $regId){
 			$query = "UPDATE users SET regId = '$regId' WHERE ID = $userId";
 			return $this->getConection()->query($query);
 			if (!$result) {
@@ -130,16 +134,23 @@
 			}
 		}
 		
-		public function AddUserToApp($userId, $regId, $appId){
+		private function AddUserToApp($userId, $regId, $appId){
 			$result = $this->UpdateRegID($userId, $regId);
 			$query = "INSERT INTO user_apps (appID, userID) values ($appId, $userId)";
 			if (!$result) {
 				file_put_contents("log.txt", "Query error " . $this->getConection()->error);
 			}
-			return $this->getConection()->query($query);
+			
+			
+			
+			$result = $this->getConection()->query($query);
+			
+			//Closing connection in this method, as it is called in 5/6 cases when registering users.
+	
+			return $result;
 		}
 
-		public function AddAppToSystem($app){
+		private function AddAppToSystem($app){
 			$query = "INSERT INTO apps (appName) values ('$app')";	
 			$result = $this->getConection()->query($query);
 			if (!$result) {
@@ -148,7 +159,7 @@
 			return  mysqli_insert_id($this->getConection());
 		}
 
-		public function CreateNewUser($email, $regId){
+		private function CreateNewUser($email, $regId){
 			$query = "INSERT INTO users (email, regId) values ('$email', '$regId')";
 			$result = $this->getConection()->query($query);
 			if (!$result) {
@@ -157,11 +168,46 @@
 			return  mysqli_insert_id($this->getConection());
 		}
 		
+		/* --Registration Methods are over-- */
+		
+		/* UI methods*/
+		
+		public function getAllApps(){
+			$query = "SELECT * FROM apps";
+			$result = $this->getConection()->query($query);
+			if (!$result) {
+				file_put_contents("log.txt", "Query error " . $this->getConection()->error);
+			}
+			while($row = $result->fetch_array()){
+				$rows[] = $row;
+			}
+			
+			return $rows;
+		}
+		
+		public function getAllIcons(){
+			$query = "SELECT * FROM notif_icons";
+			$result = $this->getConection()->query($query);
+			if (!$result) {
+				file_put_contents("log.txt", "Query error " . $this->getConection()->error);
+			}
+			while($row = $result->fetch_array()){
+				$rows[] = $row;
+			}
+			
+			return $rows;
+		}
+		
+		
+		/* --UI methods are over-- */
 		
 		
 		
 		
-		public function WipeAllTables(){
+		
+		
+		
+		private function WipeAllTables(){
 			
 			$query = "TRUNCATE TABLE users";
 			$this->getConection()->query($query);
