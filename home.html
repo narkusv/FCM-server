@@ -1,0 +1,84 @@
+<html>
+	<head>
+		<title> Home page of GCM regSystem </title>
+		<style>
+			.form-horizontal .control-label.text-left{
+				text-align: left;
+			}
+		</style>
+	     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	
+		
+	</head>
+
+	<body>
+	<!-- Notification sending form -->
+		<div class="col-sm-8" >
+			 <form class="form-horizontal">
+			 
+ 
+
+
+			 
+			<div class="col-sm-12 form-group">
+				<label class="control-label col-sm-2 text-left" for="select_notifIcon">Apps to send:</label>
+					 <div class="col-sm-7">
+						<select multiple class="form-control" id="select_notifIcon">
+							<option>Send to all apps</option>
+						</select>
+					</div>
+			</div>
+				
+				<div class="col-sm-12 form-group">
+					<label class="control-label col-sm-2 text-left" for="select_notifIcon">Icon to use:</label>
+					 <div class="col-sm-7">
+						<select class="form-control" id="select_notifIcon">
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
+							<option>4</option>
+							<option>5</option>
+							<option>6</option>
+							<option>7</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="col-sm-12 form-group">
+					<label class="control-label col-sm-2 text-left" for="input_notifTitle">Notification Title:</label>
+					 <div class="col-sm-7">
+						<input type="text" class="form-control" placeholder="Notification title" id="input_notifTitle"/>
+					</div>
+				</div>
+				
+				<div class="col-sm-12 form-group">
+					<label class="control-label col-sm-2 text-left" for="input_notifMsg">Notification message:</label>
+					<div class="col-sm-7">
+						<input type="text" class="form-control" placeholder="Notification message" id="input_notifMsg"/>
+					</div>
+				</div>
+				
+					<div class="col-sm-12 form-group">
+					<label class="control-label col-sm-2 text-left" for="input_notifUrl">Notification URL:</label>
+					 <div class="col-sm-7">
+						<input type="text" class="form-control" placeholder="Notification URL" id="input_notifUrl"/>
+					</div>
+				</div>
+			
+				<button type="submit" class="col-sm-1 col-sm-push-2 btn btn-default">Submit</button>
+			
+			</form>
+		
+		</div>
+		
+	
+	
+	
+	
+	</body>
+
+
+
+</html>
