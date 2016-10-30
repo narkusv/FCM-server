@@ -203,7 +203,42 @@
 		
 		/* --UI methods are over-- */
 		
+		/* --GCM SENDING METHODS-- */
 		
+		public function GetGCMUsers($appTypes){
+			//Get Selected Apps
+			//Get all users regIds who has selected apps
+			
+			//Send to all apps is selected (value 0)
+			if(in_array(0, $appTypes)){
+				$query="SELECT regId from users WHERE isactive = 1";
+			}else{			
+				$query="SELECT users.regId from users LEFT JOIN user_apps ON users.ID = user_apps.userID WHERE user_apps.appID IN (".implode(',',$appTypes).") AND users.isactive = 1";
+			}
+		
+			$result = $this->getConection()->query($query);
+			
+			
+			
+			
+			if($result){
+				    $gcmRegIds = array();
+					$i = 0;
+				while($row = $result->fetch_assoc()){
+					$i++;
+					$gcmRegIds[floor($i/1000)][] = $row['regId'];
+				}
+				return $gcmRegIds;
+			}else{
+				file_put_contents("log.txt", "Query error " . $this->getConection()->error);
+			}
+		}
+		
+		
+		
+		
+		
+		/** --GCM SENDING METHODS are OVER-- */
 		
 		
 		
