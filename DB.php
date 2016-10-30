@@ -165,7 +165,9 @@
 			if (!$result) {
 				file_put_contents("log.txt", "Query error " . $this->getConection()->error);
 			}
+		
 			return  mysqli_insert_id($this->getConection());
+			
 		}
 		
 		/* --Registration Methods are over-- */
@@ -181,7 +183,7 @@
 			while($row = $result->fetch_array()){
 				$rows[] = $row;
 			}
-			
+			$result->close();  
 			return $rows;
 		}
 		
@@ -194,7 +196,7 @@
 			while($row = $result->fetch_array()){
 				$rows[] = $row;
 			}
-			
+			 $result->close();
 			return $rows;
 		}
 		
