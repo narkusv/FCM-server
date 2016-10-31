@@ -41,16 +41,9 @@
 								alert('Notification was sent');
 							}
 						});				
-					}else{
-						console.log("some data is missing");
 					}
-				
 				});
-				
-				
 			});
-		
-			
 		</script>
 		
 	</head>
@@ -64,8 +57,7 @@
 						<div class="col-xs-3">
 							<select multiple class="form-control" id="select_notifApps" name="appsToSend[]">
 								<option value="0">Send to all apps</option>
-								
-								
+			
 									<?php foreach ($appList as &$app) { ?>
 										<option value="<?php echo $app[0] ?>"> <?php echo $app[1];?>  </option>
 									<?php } ?>

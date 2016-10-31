@@ -20,11 +20,16 @@ $load['link'] = $_POST['notifUrl'];
 //Get 2D array of recipients
 $recipients = $helper->GetGCMUsers($_POST['appsToSend']);
 
-	//While iterate through array: 
+	
 	if(isset($recipients)){
+		//Will use this data to monitor success/failures. 
+		$pushResults = array('success' => 0, 'failure' => 0, 'receiversCount' => 0);
+		
 		//Iterate trough 1nd dimension of array and pass 2nd dimension to sendNotification
 		foreach($recipients as $recipientChunk){
-			sendNotification($recipientChunk, $load);
+			$iterationfResult = json_decode(sendNotification($recipientChunk, $load), true);
+			readResponse($iterationfResult, $pushResults, $recipientChunk, $helper); //Basically just deletes everything that had failures while receiving notifications. Should test against updates. 
+		
 		}
 		
 		
@@ -32,7 +37,18 @@ $recipients = $helper->GetGCMUsers($_POST['appsToSend']);
 		//call sendNotification();
 		
 
-
+function readResponse($iterationResult, &$pushResults, $recipientChunk, $helper){
+	$pushResults["success"] += $iterationResult['success'];
+	$pushResults['failure'] += $iterationResult['failure'];
+	$pushResults['receiversCount'] += count($recipientChunk);
+	
+	foreach($iterationResult['results'] as $index=>$result){
+		if(array_key_exists('error', $result)){
+			$regIdToDeactivate = $recipientChunk[$index];
+			$helper->deactivateUser($regIdToDeactivate);
+		}	
+	}
+}
 
 
 function sendNotification($userIds, $msg)
@@ -55,6 +71,8 @@ function sendNotification($userIds, $msg)
         // Open connection
         $ch = curl_init();
 
+		
+		//I don't understand any of this curl shit below. 
         // Set the url, number of POST vars, POST data
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -64,6 +82,7 @@ function sendNotification($userIds, $msg)
         // Disabling SSL Certificate support temporarly
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields, true));
+
         // Execute post
         $result = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -73,12 +92,11 @@ function sendNotification($userIds, $msg)
             $status = "FAIL";
         }
 
-        $report = array();
         // Close connection
         curl_close($ch);
-		
-		echo $result;
-		file_put_contents("log.txt", $result);
+		return $result;
+	
+	
 
     }
 
