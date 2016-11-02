@@ -15,6 +15,7 @@ $load = array(
 $load['title'] = $_POST['notifTitle'];
 $load['message'] = $_POST['notifMsg'];
 $load['icon'] = $_POST['notifIcon'];
+$load['smallicon'] = $_POST{'smallnotifIcon'};
 $load['link'] = $_POST['notifUrl'];
 
 //Get 2D array of recipients

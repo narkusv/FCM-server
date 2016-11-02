@@ -136,10 +136,6 @@
 		private function UpdateRegID($userId, $regId){
 			$query = "UPDATE users SET regId = '$regId' WHERE ID = $userId";
 			return $this->getConection()->query($query);
-			if (!$result) {
-				file_put_contents("log.txt", "Query error " . $this->getConection()->error, FILE_APPEND);
-				print("Failure updating regid\n");
-			}
 		}
 		
 		private function AddUserToApp($userId, $regId, $appId){
@@ -194,6 +190,8 @@
 			if (!$result) {
 				file_put_contents("log.txt", "Query error " . $this->getConection()->error, FILE_APPEND);
 			}
+			
+			
 			while($row = $result->fetch_array()){
 				$rows[] = $row;
 			}
@@ -212,6 +210,44 @@
 			}
 			 $result->close();
 			return $rows;
+		}
+		
+		public function getUserInstalls(){
+			
+			$query = "	Select date, appID, count(appID) from user_installs group by date, appID
+						UNION
+						SELECT date, 0, COUNT(*) from user_installs GROUP BY date";
+			
+		}
+		
+		public function InsertGetMoreApp($GetMoreApp){
+			$URL = $GetMoreApp['URL'];
+			$PhotoURL = $GetMoreApp['PhotoURL'];
+			$Name = $GetMoreApp['Name'];
+			
+			$query = "INSERT INTO get_more_app VALUES ('$Name', '$URL', '$PhotoURL')";
+			$result = $this->getConection()->query($query);
+			if (!$result) {
+				file_put_contents("log.txt", "Query error " . $this->getConection()->error, FILE_APPEND);
+				print("Failure cheking if user has app\n");
+			}
+			
+			return $result;
+		}
+		
+		public function GetAllMoreApps(){
+			$query = "SELECT * FROM get_more_app";
+			$result = $this->getConection()->query($query);
+			if (!$result) {
+				file_put_contents("log.txt", "Query error " . $this->getConection()->error, FILE_APPEND);
+			}
+			while($row = $result->fetch_array()){
+				$rows[] = $row;
+			}
+			 $result->close();
+			return $rows;
+			
+			
 		}
 		
 		
@@ -242,6 +278,7 @@
 			}
 		}
 		
+		//We do not delete users, instead deactivating them is a better option.
 		public function deactivateUser($regId){
 			$query = "UPDATE users SET isactive=0 where regId='$regId'";
 			$result = $this->getConection()->query($query);
